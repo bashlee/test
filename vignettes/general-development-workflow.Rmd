@@ -1,6 +1,6 @@
 ---
 title: "General Development Workflow"
-author: "Sandro Gsteiger"
+author: "Nick Howlett, Sandro Gsteiger"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -36,7 +36,7 @@ Once you are happy with your addition to the package you can build a source vers
 devtools::build()
 ```
 
-If you are are adding or modifying a vignette (built in report) then run with the following argument
+If you are are adding or modifying a vignette (built in report) then make sure you build with the following argument
 
 ```{r, eval = FALSE}
 devtools::build(vignettes = TRUE)

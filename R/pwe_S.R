@@ -7,7 +7,7 @@
 #' @return            \code{numeric} estimate of survivor function at time t, S(t)
 #' @export
 #'
-#' @examples
+
 pwe_S <- function(time, cut.pts, haz.rates){
   out <- exp(-pwe_H(time, cut.pts, haz.rates))
   return(out)

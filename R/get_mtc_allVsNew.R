@@ -10,7 +10,7 @@
 #' @importFrom gemtc relative.effect.table
 #' @export
 #'
-#' @examples
+
 get_mtc_allVsNew <- function(x, new.lab, transform = NULL, digits = NULL){
 
 

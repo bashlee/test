@@ -1,6 +1,6 @@
 ---
 title: "Documenting Functions"
-author: "Sandro Gsteiger"
+author: "Nick Howlett, Sandro Gsteiger"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >

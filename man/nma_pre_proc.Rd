@@ -4,20 +4,19 @@
 \alias{nma_pre_proc}
 \title{NMA data pre-processing}
 \usage{
-nma_pre_proc(dat, data.type = c("GSD", "CONT"), ref.std = NULL,
-  nma.ref.trt = NULL, cut.pts = NULL)
+nma_pre_proc(data, plan)
 }
 \arguments{
-\item{dat}{input \code{data.frame}}
+\item{data}{input \code{data.frame}}
 
-\item{data.type}{\code{character} of either "GSD" or "CONT"}
-
-\item{ref.std}{\code{character} the reference study}
-
-\item{nma.ref.trt}{\code{character} the reference treatment}
-
-\item{cut.pts}{\code{numeric} of cut pointes for PWE model.}
+\item{plan}{A \code{list} containing the model plan}
+}
+\value{
+A network object or if gsd a list containing a network object and jags init parameters
 }
 \description{
 NMA data pre-processing
+}
+\seealso{
+\code{\link{groupedTTE_fp_pre_proc}}, \code{\link{groupedTTE_pwe_pre_proc}}
 }

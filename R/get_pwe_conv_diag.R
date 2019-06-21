@@ -3,16 +3,16 @@
 #' @param fit      \code{rjags} object which is the return of \code{R2jags::jags()}
 #' @param file     Optional output filename (a pdf with this name will be created if provided).
 #' @param patterns Vector of character strings used to identify the patterns selected for conv assessment.
-#'
-#' @return
+#' @param re.pattern Character
+#' @importFrom magrittr %>%
+#' @return ggplot object
 #' @export
-#'
-#' @examples
+
 get_pwe_conv_diag <- function(fit,
                               file = NULL,
                               patterns = c("d", "mu"),
                               re.pattern = "sd"){
-  `%>%` <- magrittr::`%>%`
+ # `%>%` <- magrittr::`%>%`
   plots <- list()
   fit_mc <- coda::as.mcmc(fit)
   rnames <- rownames(fit$BUGSoutput$summary)

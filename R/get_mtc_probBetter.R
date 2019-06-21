@@ -10,7 +10,7 @@
 #' @importFrom utils combn
 #' @importFrom gemtc relative.effect
 #'
-#' @examples
+
 mtc.prob.better.table <- function(x, smaller.is.better, threshold = 0, covariate = NA){
 
   ts <- as.character(x[["model"]][["network"]][["treatments"]][["id"]])
@@ -52,7 +52,7 @@ mtc.prob.better.table <- function(x, smaller.is.better, threshold = 0, covariate
 #' @return             A data.frame of probabilities of a treatment being better from a mtc model
 #' @export
 #'
-#' @examples
+
 get_mtc_probBetter <- function(x, new.lab,
                                smaller.is.better = TRUE,
                                threshold = 0,

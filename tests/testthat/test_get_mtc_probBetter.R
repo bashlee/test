@@ -4,10 +4,7 @@ test_that("`get_mtc_probBetter`, `mtc.prob.better.table`", {
   # load mtc.result object from tests/data
   # for details on how this object was generated refer to the generation script:
   # tests/data/mtcResultGeneration.R
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   # # TESTING `get_mtc_probBeter`
 
@@ -55,10 +52,7 @@ test_that("`get_mtc_probBetter`, `mtc.prob.better.table`", {
   # load mtc.result object from tests/data
   # for details on how this object was generated refer to the generation script:
   # tests/data/mtcResultGeneration.R
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   # The example data contains treatement labels A, B, C, D, E, and F
   # Generate the output for treatment comparisson all vs "A" and
@@ -91,10 +85,7 @@ test_that("`get_mtc_probBetter`, `mtc.prob.better.table`", {
   # load mtc.result object from tests/data
   # for details on how this object was generated refer to the generation script:
   # tests/data/mtcResultGeneration.R
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   # The example data contains treatement labels A, B, C, D, E, and F
   # Generate the output for treatment comparisson all vs "A" and

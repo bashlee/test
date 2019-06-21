@@ -4,10 +4,7 @@ context("Must create forest plot from `data.frame` output from `get_mtc_allVsNew
 )
 
 test_that("`plot_mtc_forest`", {
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   # The example data contains treatement labels A, B, C, D, E, and F
   # Generate the output for treatment comparisson all vs "A"
@@ -35,10 +32,7 @@ test_that("`plot_mtc_forest`", {
 context("Should allow for sorting the estimates by either 'name' (default) or 'effect' with argument `sort.by`")
 
 test_that("`plot_mtc_forest`", {
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   # The example data contains treatement labels A, B, C, D, E, and F
   # Generate the output for treatment comparisson all vs "A"
@@ -62,10 +56,7 @@ test_that("`plot_mtc_forest`", {
 context("Should allow setting of custom x-axis label with arugment `lab`")
 
 test_that("`plot_mtc_forest`", {
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   # The example data contains treatement labels A, B, C, D, E, and F
   # Generate the output for treatment comparisson all vs "A"
@@ -82,26 +73,4 @@ test_that("`plot_mtc_forest`", {
 })
 
 
-context("Should allow setting log transform of x-axis with arugment `do.log`")
 
-test_that("`plot_mtc_forest`", {
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
-
-  # The example data contains treatement labels A, B, C, D, E, and F
-  # Generate the output for treatment comparisson all vs "A"
-  output <- get_mtc_newVsAll(mtc_ex, new.lab = "A", transform = "exp", digits = 2)
-
-  p_out <-  plot_mtc_forest(x = output,
-                            do.log = TRUE)
-
-})
-
-
-context("Should allow specification of x-axis breaks with argument `breaks`")
-
-test_that("`plot_mtc_forest`", {
-  expect_true(FALSE)
-})

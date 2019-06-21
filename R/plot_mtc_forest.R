@@ -10,7 +10,7 @@
 #' @importFrom graphics plot
 #' @export
 #'
-#' @examples
+
 plot_mtc_forest <- function(x, sort.by = c("name", "effect")[1],
                             lab = NULL,
                             do.log = TRUE,

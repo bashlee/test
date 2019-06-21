@@ -2,10 +2,10 @@
 #'
 #' @param cut.pts Vector with cut points
 #'
-#' @return \code(factor) of segments
+#' @return \code{factor} of segments
 #' @export
 #'
-#' @examples
+
 get_segments <- function(cut.pts){
   cuts0 <- c(0, cut.pts)
   cutsInf <- c(cut.pts, Inf)
@@ -22,6 +22,16 @@ get_segments <- function(cut.pts){
   return(segments_f)
 }
 
+#' Utility function to get segments (as character strings) from vector with cutpoints
+#'
+#' @param x NULL value
+#' @param cuts Vector with cut points
+#' @param right Logical 
+#' @param ordered_results Logical
+#'
+#' @return \code{factor} of segments
+#' @export
+#'
 
 get_pw_segments <- function(x = NULL,
                             cuts,

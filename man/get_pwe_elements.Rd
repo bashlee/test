@@ -2,16 +2,16 @@
 % Please edit documentation in R/get_pwe_elements.R
 \name{get_pwe_elements}
 \alias{get_pwe_elements}
-\title{Extract model name, exponents, comments, DIC and pD from NMA fit in jags of a piecewise-exponential model.}
+\title{Extract model information and fit statistics from NMA fit in jags of a piecewise-exponential model.}
 \usage{
 get_pwe_elements(nmaout)
 }
 \arguments{
-\item{nmaout}{A list with the results from NMA fit (jags). The list must contain the names elements `descr_s, model.pars, fit, DICsamp`.}
+\item{nmaout}{A list with the results from NMA fit (jags). The list must contain the named elements `descr_s, model.pars, fit, DICsamp`.}
 }
 \value{
 list with description and fit metrics
 }
 \description{
-Extract model name, exponents, comments, DIC and pD from NMA fit in jags of a piecewise-exponential model.
+Extract model information and fit statistics from NMA fit in jags of a piecewise-exponential model.
 }

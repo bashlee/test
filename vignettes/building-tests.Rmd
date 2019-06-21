@@ -1,6 +1,6 @@
 ---
 title: "Building tests for your functions"
-author: "Sandro Gsteiger"
+author: "Nick Howlett, Sandro Gsteiger"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -18,9 +18,9 @@ knitr::opts_chunk$set(
 
 ## Building tests for your functions
 
-Another requirement of developing functions for the package is that they have some testing built in. Testing is the process of specifying the expected resuts of your function given a fixed input. Once a proper set of tests for a function has been built you can modify the function and the tests will inform you if the behaviour has changed. This can be extremely helpful when developing a colleciton of functions which are intetdependant, as it will alert you to when the behavior of a function changes during development even if you were not currently changing that function.
+Another requirement of developing functions for the package is that they have some testing built in. Testing is the process of specifying the expected resuts of your function given a fixed input. Once a proper set of tests for a function has been built you can modify the function and the tests will inform you if the behaviour has changed. This can be extremely helpful when developing a colleciton of functions which are interdependant, as it will alert you to when the behavior of a function changes during development even if you were not currently changing that function.
 
-The standard for test frameworks in R is `testthat` which is an R package that comes with a set of functions for constructing tests and integrates with `devtools` so that the tests are run every time the package is built. Tests must be written into files with names beginning with `test-` which are then placed in the `tests/testthat` folder relative to the package root. A typical convention is to have one test file per function (as with function writing). 
+The standard for test frameworks in R is `testthat` which is an R package that comes with a set of functions for constructing tests and integrates with `devtools` so that the tests are run every time the package is built. Tests must be written into files with names beginning with `test_` which are then placed in the `tests/testthat` folder relative to the package root. A typical convention is to have one test file per function (as with function writing). 
 
 This document will not cover the principles of unit-testing here, there are many resources for this - (see [here](http://r-pkgs.had.co.nz/tests.html)) - a simple example test is shown below.
 

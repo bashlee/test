@@ -3,6 +3,7 @@ title: "gemtcPlus README"
 output: github_document
 ---
 
+_Package under development (draft)._
 
 ## Introduction
 
@@ -17,20 +18,25 @@ and scalable.
 
 ## Installation
 
-Installation is simple, either install directly from this repo, or download a source and install from the tarball.
+Installation is simple, either install directly from this repo [... give code ...], or download a source and install from the tarball `install.packages("gemtcPlus_1.0.0.tar.gz", repos = NULL, type = "source")`.
 
 ## Getting Started
 
-There are some quick-start guides which are built into this pacakge in vignettes. The guides cover the basics and any specific conventions regarding report writing, function building, unit testing. An easy way to see these guides (and example analysis reports) is by calling `browseVignettes(package = "gemtcPlus")` after the package has been installed.
+There are some quick-start guides which are built into this package in vignettes. The guides cover the basics and any specific conventions regarding report writing, function building, unit testing. An easy way to see these guides (and example analysis reports) is by calling `browseVignettes(package = "gemtcPlus")` after the package has been installed. These examples can be used as templates.
 
-## To-Do
+Running the below will create a new skeleton template with the correct sections to fill. The type argument supplied will determine which planning function the document is pre-populated with. 
 
-- Expand (and fill in) the documentation for `nma_pre_proc` and `nma_jags_inits` functions.
-- Add additional data workflows in `nma_pre_proc`.
-- Rework `pwe_conv_diag` function, breaking into smaller (testable) modules and potentially removing the dependency on the `R2jags` package.
-- Reduce complexity of example reports in `/vignettes` in order to reduce build time for the package.
-- Build tests for `nma_pre_proc` and `nma_jags_inits` functions.
-- Finish development of utility function `get_segments` & `get_pw_segments`. These two functions could be one.
-- Replace all instances of `reshape2::melt` with `tidyr::gather` to reduce dependencies (also `tidyr` is newer and supported more than `reshape2`).
+
+```
+create_template("pwe") # fp, binary and gsd are also supported
+```
+
+Each plan_* function comes with a help file detailing the model input parameters to use, for example `?plan_pwe` to view the help on planning a piecewise exponential model. 
+
+### Workflow
+The below image is a schemeatic representation of the new workflow. The information boxes within each section give an idea of which functions are being called in the backend.
+
+
+### <img src="inst/basic_workflow.png" width="400">
 
 

@@ -6,10 +6,10 @@
 #'
 #' @author Iain Bennett (adaptations: Sandro Gsteiger)
 #'
-#' @return \code{jagsInfo} object which contains jags simulation information accesed via a call to  \print{print}
+#' @return \code{jagsInfo} object which contains jags simulation information accesed via a call to  \code{print}
 #' @export
 #'
-#' @examples
+
 get_jags_info <- function(sims, include.comments = FALSE, input.round.function = function(x) signif(x, digits = 4)){
 
   ### convert the model to a string (strip out comment lines if requested)

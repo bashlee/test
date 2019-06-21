@@ -1,9 +1,11 @@
-#' Extract model name, exponents, comments, DIC and pD from list of NMA fits (jags) of piecewise exponential models.
+#'  Extract model information and fit statistics from a list of piecewise-exponential NMA fits.
 #'
 #' @param nmaout.list List of results lists (which must contain the names elements `descr_s, model.pars, fit, DICsamp`).
-#' @export
 #'
 #' @return matrix comparing the models
+#' @export
+#' 
+
 get_pwe_comparison <- function(nmaout.list){
 
   all_ls <- lapply(nmaout.list, get_pwe_elements)

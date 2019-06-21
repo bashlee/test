@@ -13,6 +13,11 @@ get_pwe_conv_diag(fit, file = NULL, patterns = c("d", "mu"),
 \item{file}{Optional output filename (a pdf with this name will be created if provided).}
 
 \item{patterns}{Vector of character strings used to identify the patterns selected for conv assessment.}
+
+\item{re.pattern}{Character}
+}
+\value{
+ggplot object
 }
 \description{
 Utility function: convergence diagnostics for piece-wise constant models

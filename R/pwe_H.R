@@ -7,7 +7,7 @@
 #' @return            \code{numeric} estimate of the hazard over [0, tmax]
 #' @export
 #'
-#' @examples
+
 pwe_Hu <- function(time, cut.pts, haz.rates){
   hf <- stepfun(x = cut.pts, y = haz.rates)
   H <- integrate(hf, lower = 0, upper = time)

@@ -1,6 +1,6 @@
 ---
 title: "Building Reports into the Package"
-author: "Sandro Gsteiger"
+author: "Nick Howlett, Sandro Gsteiger"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -18,13 +18,13 @@ knitr::opts_chunk$set(
 
 ## Building Reports into the Package
 
-Example usage reports are built into this package with the aim to make the analysis more accessible to new users. Developers can add to the collection of reports by declaring a new vignette using devtools
+Example usage reports are built into this package (as vignettes) with the aim to make the analysis more accessible to new users. Developers can add to the collection of reports by creating a new vignette using devtools
 
 ```{r, eval = FALSE}
-devtools::use_vignette(name = "Report title", package = "gemtcRoche")
+devtools::use_vignette(name = "Report title", package = "gemtcPlus")
 ```
 
-Executing the line above will create an R Markdown file in the `vingettes` directory of the package root. All R Markdown files in this directory are built as vignettes when the package is built by running. During a `build` (with argument `vignettes = TRUE`) the package is first installed, so the code can be used, and then the vignettes are built. This means that in order to access the functions/datasets that come with the package in the vignette you will need to make a call to `library(gemtcPlus)` at the start of the document.
+Executing the line above will create an R Markdown file in the `vingettes` directory of the package root. All R Markdown files in this directory are built as vignettes when the package is built by running
 
 ```{r, eval = FALSE}
 devtools::build(vignettes = TRUE)
@@ -32,13 +32,15 @@ devtools::build(vignettes = TRUE)
 
 This document will not cover the details of R Markdown, for a good reference I recommend [this](http://r-pkgs.had.co.nz/vignettes.html) resource.
 
-However there are two conventions which are specific to the vignette building used in this package. The conventions concern reading/writing files. NMA analyses can take some time to run and can have outputs of sizes larger than 100Mb. For this reason it's practical to break the generation of results and presentation of them into separate steps. It's also a good idea to break the output objects required to do so into smaller chunks. Another requirement of running NMA analyses here is the use of `BUGS` code which is most conveniently loaded in from a text file. This necessitates a process to read/write files when building the package vignettes. To handle this properly there are two functions you need to use.
+During a `build` (with argument `vignettes = TRUE`) the package is first installed, so the code can be used, and then the vignettes are built. This means that in order to access the functions/datasets that come with the package in the vignette you will need to make a call to `library(gemtcPlus)` at the start of the document.
+
+However there are two conventions which are specific to the vignette building used in this package. The conventions concern reading/writing files. NMAs may involve running very long MCMCs. This can take some time and can have outputs of sizes larger than 100Mb. For this reason it's practical to break the generation of results and presentation of them into separate steps. It's also a good idea to break the output objects required to do so into smaller chunks. Another requirement of running NMA analyses here is the use of `BUGS` code which is most conveniently loaded in from a text file. This necessitates a process to read/write files when building the package vignettes. To handle this properly there are two functions you need to use.
 
 For reading system files the `system.file()` function which will produce a directory path string. Here is an example of loading a `BUGS` file using `system.file()`
 
 ```{r, eval = FALSE}
-fit <- jags(model.file = system.file("BUGScode",
-                                     "tte_piece-wise-cst_fe.txt",
+fit <- jags(model.file = system.file("BUGScode",                  
+                                     "tte_piece-wise-cst_fe.txt", 
                                      package = "gemtcRoche"),
             data = c(dat_jg,
                      list(prior_mean = 0),

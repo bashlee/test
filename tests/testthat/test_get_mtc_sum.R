@@ -4,10 +4,7 @@ test_that("`get_mtc_sum`", {
   # load mtc.result object from tests/data
   # for details on how this object was generated refer to the generation script:
   # tests/data/mtcResultGeneration.R
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   output <- get_mtc_sum(mtc_ex)
 
@@ -25,10 +22,7 @@ test_that("`get_mtc_sum`", {
   # load mtc.result object from tests/data
   # for details on how this object was generated refer to the generation script:
   # tests/data/mtcResultGeneration.R
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   # output with more digits this time
   output <- get_mtc_sum(mtc_ex, digits = 5)

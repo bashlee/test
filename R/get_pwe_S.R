@@ -2,23 +2,25 @@
 #' from a reference trial (in the NMA) with the piecewise-constant hazard ratio estimates to construct the S(t) functions for each treatment.
 #'
 #' @param fit       JAGS object with NMA fit.
-#' @param cut.pts   Cut points for piecewise-constant model.
 #' @param ref.std   Numeric identifier of reference study to use for baseline survival estimate.
 #' @param ref.arm   Numeric identifier of arm in reference study to use for baseline survival estimate.
-#' @param treatments Vector with character strings to label the treatments.
+#' @param treatments Vector with character strings to label the treatments. If NULL treatments extracted from fit
 #' @param time      Vector of time-points at which S(t) functions are calculated.
 #' @param bl.node   Charactor to identify the node in the jags model that identifies the baseline estimates (default is "mu").
 #' @param contrast.node Charactor to identify the node in the jags model that identifies the baseline estimates (default is "d").
 #'
+#' @importFrom magrittr %>%
 #' @return          a \code{data.frame} containing survivor function for each treatment
 #' @export
 #'
-#' @examples
-get_pwe_S <- function(fit, cut.pts, ref.std, ref.arm, treatments,
+
+get_pwe_S <- function(fit, ref.std, ref.arm, treatments = NULL,
                       time = 0:24, bl.node = "mu", contrast.node = "d"){
 
-  `%>%` <- magrittr::`%>%`
-
+  if(is.null(treatments)){
+    treatments <- unique(attr(fit$data.jg, "d_arms")$treatment[order(attr(fit$data.jg, "d_arms")$treatmentn)]) 
+  }
+  cut.pts <- fit$model.pars$cut.pts
   n_trt <- length(treatments)
   seg <- get_segments(cut.pts)
   n_seg <- length(seg)

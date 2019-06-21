@@ -5,10 +5,7 @@ test_that("`get_mtc_allVsNew`", {
   # load mtc.result object from tests/data
   # for details on how this object was generated refer to the generation script:
   # tests/data/mtc_result_generation.R
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   # The example data contains treatement labels A, B, C, D, E, and F
   # Generate the output for treatment comparisson all vs "A"
@@ -39,10 +36,7 @@ test_that("`get_mtc_newVsAll`", {
   # load mtc.result object from tests/data
   # for details on how this object was generated refer to the generation script:
   # tests/data/mtc_result_generation.R
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   # The example data contains treatement labels A, B, C, D, E, and F
   # Generate the output for treatment "A" vs all vs "A"
@@ -73,10 +67,7 @@ test_that("`get_mtc_allVsNew`", {
   # load mtc.result object from tests/data
   # for details on how this object was generated refer to the generation script:
   # tests/data/mtc_result_generation.R
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   # The example data contains treatement labels A, B, C, D, E, and F
   # To test the comparator functionality we will generate all combinations
@@ -106,10 +97,7 @@ test_that("`get_mtc_newVsAll`", {
   # load mtc.result object from tests/data
   # for details on how this object was generated refer to the generation script:
   # tests/data/mtc_result_generation.R
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   # The example data contains treatement labels A, B, C, D, E, and F
   # To test the comparator functionality we will generate all combinations
@@ -139,10 +127,7 @@ test_that("`get_mtc_allVsNew`", {
   # load mtc.result object from tests/data
   # for details on how this object was generated refer to the generation script:
   # tests/data/mtc_result_generation.R
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   # Generate output with exponential transform argument "exp"
   output_exp <- get_mtc_allVsNew(mtc_ex,
@@ -166,10 +151,7 @@ test_that("`get_mtc_newVsAll`", {
   # load mtc.result object from tests/data
   # for details on how this object was generated refer to the generation script:
   # tests/data/mtc_result_generation.R
-  mtc_ex <- readRDS(system.file("tests",
-                                "data",
-                                "mtc_result_output.RDS",
-                                package = "gemtcPlus"))
+  mtc_ex <- readRDS(file.path("data", "mtc_result_output.RDS"))
 
   # Generate output with exponential transform argument "exp"
   output_exp <- get_mtc_newVsAll(mtc_ex,

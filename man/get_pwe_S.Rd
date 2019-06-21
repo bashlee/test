@@ -5,19 +5,17 @@
 \title{Calculate the survivor functions estimated in piecewise-constant NMA model. The absolute S(t) estimates combining the estimated baseline survival
 from a reference trial (in the NMA) with the piecewise-constant hazard ratio estimates to construct the S(t) functions for each treatment.}
 \usage{
-get_pwe_S(fit, cut.pts, ref.std, ref.arm, treatments, time = 0:24,
+get_pwe_S(fit, ref.std, ref.arm, treatments = NULL, time = 0:24,
   bl.node = "mu", contrast.node = "d")
 }
 \arguments{
 \item{fit}{JAGS object with NMA fit.}
 
-\item{cut.pts}{Cut points for piecewise-constant model.}
-
 \item{ref.std}{Numeric identifier of reference study to use for baseline survival estimate.}
 
 \item{ref.arm}{Numeric identifier of arm in reference study to use for baseline survival estimate.}
 
-\item{treatments}{Vector with character strings to label the treatments.}
+\item{treatments}{Vector with character strings to label the treatments. If NULL treatments extracted from fit}
 
 \item{time}{Vector of time-points at which S(t) functions are calculated.}
 

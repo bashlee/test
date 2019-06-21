@@ -1,23 +1,27 @@
 #' Utility function to extract HR estimates from piece-wise exponential model fit in (format needed for ggplot)
 #'
 #' @param fit             \code{rjags} object which is the return of \code{R2jags::jags()}
-#' @param treatments      Vector of treatment names (character string) ordered according to array indexes in jags fit.
-#' @param cut.pts         Numeric vector with cut points of piece-wise exponential model.
+#' @param treatments      Vector of treatment names (character string) ordered according to array indexes in jags fit. If NULL treatments extracted from fit
 #' @param ref             Character string identifying reference treatment to use in calculating contrasts.
 #' @param reverse         Logical, if TRUE (default) "ref vs others" is calculated (instead of "others vs ref").
 #' @param exponentiate    Logical, if TRUE (default) contrast estimates are exponentiated in output.
+#' @param xmax            Numeric
+#' @param digits          Numeric
+#' @param alpha           Numeric
 #'
+#' @importFrom magrittr %>%
 #' @return                A \code{data.frame} contatining hazzard ratio estimates from an \code{rjags} object which is the return of \code{R2jags::jags()}
 #' @export
 #'
-#' @examples
-get_pwe_contrasts <- function(fit, treatments, cut.pts, ref = "Atezolizumab+Bevacizumab",
+
+get_pwe_contrasts <- function(fit, treatments = NULL, ref = "Atezolizumab+Bevacizumab",
                               reverse = FALSE, exponentiate = TRUE, xmax = 24, digits = 3,
                               alpha = 0.05){
 
-  `%>%` <- magrittr::`%>%`
-
-
+  if(is.null(treatments)){
+    treatments <- unique(attr(fit$data.jg, "d_arms")$treatment[order(attr(fit$data.jg, "d_arms")$treatmentn)]) 
+  }
+  cut.pts <- fit$model.pars$cut.pts
   segments <- get_segments(cut.pts)
   n_seg <- length(segments)
   n_trt <- length(treatments)

@@ -6,7 +6,7 @@
 #' @return        A data.frame of mtc model summary statistics
 #' @export
 #'
-#' @examples
+
 get_mtc_sum <- function(x, digits = 2){
   out <- data.frame(DIC = x$deviance$DIC,
                     pD = x$deviance$pD,

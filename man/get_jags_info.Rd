@@ -15,7 +15,7 @@ get_jags_info(sims, include.comments = FALSE,
 \item{input.round.function}{Function to apply to data inputs - default: function(x) signif(x, digits = 4)}
 }
 \value{
-\code{jagsInfo} object which contains jags simulation information accesed via a call to  \print{print}
+\code{jagsInfo} object which contains jags simulation information accesed via a call to  \code{print}
 }
 \description{
 Utility function to return jags data and model for reporting (e.g. in appendix)

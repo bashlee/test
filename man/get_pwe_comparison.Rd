@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_pwe_comparison.R
 \name{get_pwe_comparison}
 \alias{get_pwe_comparison}
-\title{Extract model name, exponents, comments, DIC and pD from list of NMA fits (jags) of piecewise exponential models.}
+\title{Extract model information and fit statistics from a list of piecewise-exponential NMA fits.}
 \usage{
 get_pwe_comparison(nmaout.list)
 }
@@ -13,5 +13,5 @@ get_pwe_comparison(nmaout.list)
 matrix comparing the models
 }
 \description{
-Extract model name, exponents, comments, DIC and pD from list of NMA fits (jags) of piecewise exponential models.
+Extract model information and fit statistics from a list of piecewise-exponential NMA fits.
 }

@@ -10,7 +10,7 @@
 #' @importFrom stats na.omit
 #' @importFrom gemtc relative.effect.table
 #'
-#' @examples
+
 
 get_mtc_newVsAll <- function(x, new.lab, transform = NULL, digits = NULL){
   out <- relative.effect.table(x)[, new.lab, c("50%", "2.5%", "97.5%")]

@@ -10,7 +10,7 @@ get_segments(cut.pts)
 \item{cut.pts}{Vector with cut points}
 }
 \value{
-\code(factor) of segments
+\code{factor} of segments
 }
 \description{
 Utility function to get segments (as character strings) from vector with cutpoints

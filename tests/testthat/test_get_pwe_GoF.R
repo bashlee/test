@@ -4,11 +4,7 @@ test_that("`get_pwe_GoF`", {
   # load rjags fit list object from tests/data
   # for details on how this object was generated refer to the generation script:
   # tests/data/rjags_generation.R
-
-  rjags_list_ex <- readRDS(system.file("tests",
-                                       "data",
-                                       "rjags_output_list.RDS",
-                                       package = "gemtcPlus"))
+  rjags_list_ex <- readRDS(file.path("data", "rjags_output_list.RDS"))
 
 
   output <- get_pwe_GoF(fit = rjags_list_ex[[1]]$fit,

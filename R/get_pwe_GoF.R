@@ -2,26 +2,27 @@
 #' from the binned KM data to compare observed and estimated survivor functions.
 #'
 #' @param fit       JAGS object with NMA fit.
-#' @param cut.pts   Cut points for piecewise-constant model.
 #' @param data.arms Data frame with one line per study arm and columns study, treatment, studyn, treatmentn.
 #' @param data.jg   List with input data set that was used in jags fit.
 #' @param time      Vector of time-points at which S(t) functions are calculated.
 #' @param bl.node   Charactor to identify the node in the jags model that identifies the baseline estimates (default is "mu").
 #' @param contrast.node Charactor to identify the node in the jags model that identifies the baseline estimates (default is "d").
 #'
-#' @return
+#' @importFrom magrittr %>%
+#' @importFrom grDevices dev.off pdf
+#' @importFrom methods new
+#' @importFrom stats dt integrate median quantile relevel stepfun
+#' @return data.frame
 #' @export
 #'
-#' @examples
-get_pwe_GoF <- function(fit, cut.pts,
+
+get_pwe_GoF <- function(fit, 
                         data.arms,
                         data.jg,
                         time = 0:60,
                         bl.node = "mu",
                         contrast.node = "d"){
-
-  `%>%` <- magrittr::`%>%`
-
+  cut.pts <- fit$model.pars$cut.pts
   seg <- get_segments(cut.pts)
   n_seg <- length(seg)
 
