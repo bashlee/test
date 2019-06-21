@@ -1,0 +1,207 @@
+---
+title: "Bayesian FE & RE NMA for HR data (via gemtc package) - Result Generation"
+author: "Sandro Gsteiger"
+date: "r format(Sys.Date(),'%B %d, %Y')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Bayesian FE & RE NMA for HR data (via gemtc package) - Result Generation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+library(dplyr)
+library(gemtc)
+library(gemtcPlus)
+library(ggmcmc)
+
+
+
+## control seeds and gemtc inits to ensure reproducibility (assumes we will run 3 chains)
+rsd <- 834100
+jags_inits <- list(
+                   list(".RNG.name"="base::Wichmann-Hill", ".RNG.seed" = 94387), # for reproducible jags runs
+                   list(".RNG.name"="base::Wichmann-Hill", ".RNG.seed" = 24507),
+                   list(".RNG.name"="base::Wichmann-Hill", ".RNG.seed" = 39483)
+                   )
+
+## NOTE: wd should be location of this file (all pathes rel to this location)
+```
+
+
+# Inputs
+
+```{r}
+# load example data
+data("hr_data", package = "gemtcPlus")
+```
+
+__Table__ Log-HRs
+```{r, results='asis', echo=FALSE}
+pander::pandoc.table(hr_data,
+                     row.names = FALSE,
+                     split.tables = Inf,
+                     justify = rep("left", ncol(hr_data)),
+                     digits = 3
+                    )
+```
+
+# NMA fits
+Prepare the network data for gemtc.
+```{r, echo=FALSE}
+dmtc <-  nma_pre_proc(dat = hr_data,
+                      data.type = "CONT"
+                      )
+nw <- mtc.network(data.re = dmtc)
+nw
+```
+
+
+Prepare the gemtc models.
+```{r}
+n.chains <- 3
+set.seed(rsd)
+models <- list(
+               fixed.effect =  mtc.model(
+                                         nw,
+                                         n.chain = n.chains,
+                                         likelihood = "normal",
+                                         link = "identity",
+                                         linearModel = "fixed",
+                                         om.scale = 5
+                                        ),
+               random.effects1 = mtc.model(
+                                           nw,
+                                           n.chain = n.chains,
+                                           likelihood = "normal",
+                                           link = "identity",
+                                           linearModel = "random",
+                                           om.scale = 5,
+                                           hy.prior =
+                                             mtc.hy.prior(
+                                                          type = "var",
+                                                          distr = "dlnorm",
+                                                          -4.18, 1 /1.41 ^ 2
+                                                          ) # informative prior by Turner et al.
+                                          ),
+               random.effects2 = mtc.model(
+                                           nw,
+                                           n.chain = n.chains,
+                                           likelihood = "normal",
+                                           link = "identity",
+                                           linearModel = "random",
+                                           om.scale = 5,
+                                           hy.prior =
+                                             mtc.hy.prior(
+                                                          type = "var",
+                                                          distr = "dlnorm",
+                                                          -4.18, 1 /3 ^ 2
+                                                          ) # much inflated Turner et al.
+                                          ),
+               random.effects = mtc.model(
+                                          nw,
+                                          n.chain = n.chains,
+                                          likelihood = "normal",
+                                          link = "identity",
+                                          linearModel = "random",
+                                          om.scale = 5,
+                                          hy.prior =
+                                            mtc.hy.prior(
+                                                         type = "std.dev",
+                                                         distr = "dunif",
+                                                         0,
+                                                         2
+                                                         ) # flat prior SD~U(0,2);
+                                         )
+               )
+
+
+# modify mc model list object for each model in models
+# this code adds the jags_inits to the inits element of each mc model
+models <- models %>%
+          purrr::map(~purrr::map2(.$inits,
+                                  jags_inits,
+                                  ~(purrr::prepend(.x, .y)))) %>%
+          purrr::map2(models, ~purrr::list_modify(.y, inits = .x))
+
+
+
+
+
+
+```
+
+
+Fit the models.
+```{r, include=FALSE}
+n.iter <- 10000
+n.burnin <- 5000
+n.thin <- 1
+
+
+out_all <- models %>%
+           purrr::imap(~append(mtc.run(.x,
+                                       n.adapt = n.burnin,
+                                       n.iter = n.iter,
+                                       thin = n.thin),
+                      values = list(data.raw = hr_data, name = .y)))
+
+```
+
+
+# Convergence diagnostics
+```{r, results='asis', echo=FALSE, fig.height=8, fig.width=6}
+
+for(i in seq_along(models)){
+  if (models[[i]]$linearModel == "fixed"){
+    title_i <- "Fixed effect model"
+  } else{
+    title_i <- paste("Random effects model,", paste(models[[i]]$hy.prior), "\n")
+  }
+  cat("##", title_i, "\n")
+  cat("### Traceplot\n")
+  plot(ggs_traceplot(ggs(out_all[[i]]$samples)))
+  cat("\n\n")
+  cat("### Densityplot\n")
+  plot(ggs_density(ggs(out_all[[i]]$samples)))
+  cat("\n\n")
+  cat("### Brooks-Gelman-Rubin diagnostic (Rhat)\n")
+  plot(ggs_Rhat(ggs(out_all[[i]]$samples)))
+  cat("\n\n")
+}
+
+```
+
+
+
+# Output object for report generation
+```{r}
+# split list into separate objects, otherwise file size too large for github (>100MB)
+for(i in seq_along(out_all)){
+  out <- out_all[[i]]
+  save(out, file = here::here("inst",
+                              "extdata",
+                              "results",
+                              paste("out-",
+                                    i,
+                                    ".RData",
+                                    sep = "")))
+}
+```
+
+
+
+# Session info
+BEE repository: `r getwd()`
+
+```{r}
+date()
+sessionInfo()
+```
+
+
+

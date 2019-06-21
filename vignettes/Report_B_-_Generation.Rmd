@@ -1,0 +1,313 @@
+---
+title: 'Bayesian FE & RE NMA using PWE model (via gemtc package) - Result Generation'
+author: "Sandro Gsteiger"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Bayesian FE & RE NMA using PWE model (via gemtc package) - Result Generation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(ggplot2)
+library(R2jags)
+library(ggmcmc)
+library(gemtcPlus)
+
+rsd <- 29348
+do.conv.diag <- TRUE
+```
+
+
+# Inputs
+
+```{r}
+# Grouped survival data
+data("grouped_KM")
+```
+
+
+__Figure__ Binned Kaplan-Meier curves (digitized and in-house data)
+```{r, echo=FALSE, fig.width=11, fig.height=8}
+ggplot(data = grouped_KM) +
+  geom_step(aes(t.start, S.start)) +
+  facet_grid(study ~ treatment) +
+  ylim(0, 1) +
+  xlab("Month") +
+  ylab("Survival probability")
+```
+
+
+# Run the NMA
+
+## NMA input data
+
+Add numeric study and treatment identifiers (with treatments ordered to have suitable NMA reference).
+```{r}
+ref.std <- "STUDY2"                # select study (for baseline estimates)
+nma.ref.trt <- "B"                 # need to select well connected treatment as nw ref
+
+
+# START PRE PROC FNC HERE
+
+cut.points <- c(3, 10)
+
+dat <-  nma_pre_proc(dat = grouped_KM,
+                     data.type = "GSD",
+                     nma.ref.trt = nma.ref.trt,
+                     ref.std = ref.std,
+                     cut.pts = cut.points
+                     )
+
+  
+head(dat, 10)
+tail(dat, 10)
+```
+
+
+Generate numeric arm identifiers, numbers of arms per study, .
+```{r}
+# Prepare input data: counters for arm etc
+
+dat_jags <- nma_jags_inits(dat = dat)
+
+d_std <- dat_jags$d_std
+d_arms <- dat_jags$d_arms
+d_trts <- dat_jags$d_trts
+
+# dat has been modified (join inside `nma_jags_inits` to include columns `arm` and `n_arms`
+dat <- dat_jags$dat
+
+rm(dat_jags)
+```
+
+
+Input data for JAGS.
+```{r}
+dat_jg <- list(
+  Nobs = nrow(dat),
+  Ns = nrow(d_std),
+  Na = d_std$n_arms,
+  segment = dat$segment,
+  Ncuts = length(cut.points),
+  r = dat$n.event,
+  n = dat$n.risk,
+  dt = dat$dt,
+  s = dat$studyn,
+  a = dat$arm,
+  t = as.matrix(select(ungroup(d_trts), -studyn)),
+  Ntrt = max(select(ungroup(d_trts), -studyn), na.rm = TRUE)
+)
+dat_jg # pre-proc output
+
+# END DATA PRE-PROC HERE
+```
+
+
+## JAGS fits
+
+```{r}
+## output object needed for each fit
+out_gen <- list(r.seed = rsd,
+                data.jg = dat_jg,
+                data.df = dat,
+                data.arms = d_arms,
+                model.type = "PWE",
+                model.pars = list(cut.pts = cut.points))
+out_all <- list()
+```
+
+```{r}
+fit.count <- 0
+```
+
+### Fixed effect model
+
+```{r, echo=TRUE}
+n.iter <- 5000   # TOO SMALL FOR REAL ANALYSIS
+n.burnin <- 2500 # MORE PRACTICAL FOR EXAMPLE
+n.thin <- 1
+n.chains <- 3
+
+
+# COMBINE jags and dic.samples call into one function
+
+# JAGS fit
+set.seed(rsd)
+rm(fit)
+fit <- jags(model.file = system.file("BUGScode",
+                                     "tte_piece-wise-cst_fe.txt",
+                                     package = "gemtcPlus"),
+            data = c(dat_jg,
+                     list(prior_mean = 0),
+                     list(prior_prec = 0.0001)),
+            parameters = c("d", "mu"),
+            n.chains = n.chains,
+            n.iter = n.iter,
+            n.burnin = n.burnin,
+            n.thin = n.thin)
+
+
+fit.count <- fit.count + 1
+
+# Re-calculate DIC as default in JAGS uses normal approximation instead of full MCMC samples
+DICsamp <- dic.samples(fit$model, n.iter = n.iter, n.burn = n.burnin, thin = n.thin, type="pD")
+DICsamp
+
+fit$BUGSoutput$DIC      <- sum(DICsamp$deviance) + sum(DICsamp$penalty)
+fit$BUGSoutput$pD       <- sum(DICsamp$penalty)
+fit$BUGSoutput$DICbyR   <- FALSE
+
+fit
+```
+
+
+```{r}
+## Diagnostics
+if (do.conv.diag) {get_pwe_conv_diag(fit,
+                                     file = here::here("inst", "extdata", "results", paste("fit-pwe-conv-", fit.count, ".pdf", sep = "")))}
+
+## prepare output
+out_all[[fit.count]] <- c(out_gen,
+                          list(fit = fit,
+                               DICsamp = DICsamp,
+                               descr_s = "PWE, FE",
+                               descr = "Piecewise exponential model (fixed effect)",
+                               RE = FALSE,
+                               comment.re = NA,
+                               prior = NA)
+)
+```
+
+
+
+
+### Random effects models
+
+__Informative prior by Turner et al. LN(-4.2, 1.4^2)__
+```{r, echo=TRUE}
+set.seed(rsd)
+rm(fit)
+fit <- jags(model.file = system.file("BUGScode",
+                                     "tte_piece-wise-cst_re_lnprior.txt",
+                                     package = "gemtcPlus"),
+            data = c(dat_jg,
+                     list(prior_mean = 0),
+                     list(prior_prec = 0.0001),
+                     list(ln.prior.mn = -4.18),
+                     list(ln.prior.prec = 1/1.41^2)),
+            parameters = c("d", "mu", "sd"),
+            n.chains = n.chains, n.iter = n.iter, n.burnin = n.burnin, n.thin = n.thin)
+fit.count <- fit.count + 1
+
+# Re-calculate DIC as default in JAGS uses normal approximation instead of full MCMC samples
+DICsamp <- dic.samples(fit$model, n.iter = n.iter, n.burn = n.burnin, thin = n.thin, type="pD")
+DICsamp
+
+fit$BUGSoutput$DIC      <- sum(DICsamp$deviance) + sum(DICsamp$penalty)
+fit$BUGSoutput$pD       <- sum(DICsamp$penalty)
+fit$BUGSoutput$DICbyR   <- FALSE
+
+fit
+```
+
+
+```{r}
+## Diagnostics
+if (do.conv.diag) {get_pwe_conv_diag(fit,
+                                     file = here::here("inst",
+                                                       "extdata",
+                                                       "results",
+                                                       paste("fit-pwe-conv-",
+                                                             fit.count,
+                                                             ".pdf",
+                                                             sep = "")))}
+
+## prepare output
+out_all[[fit.count]] <- c(out_gen,
+                          list(fit = fit,
+                               DICsamp = DICsamp,
+                               descr_s = "PWE, RE (Turner et al prior)",
+                               descr = "Piecewise constant model (random effects, Turner et al prior LN(-4.2, 1.4^2))",
+                               RE = TRUE,
+                               comment.re = "Informative prior (Turner et al, LN(-4.2, 1.4^2))",
+                               prior = "LN(-4.2, 1.4^2)"))
+```
+
+
+__Inflated Turner et al. prior LN(-2, 1.4^2)__
+```{r, echo=TRUE}
+set.seed(rsd)
+rm(fit)
+fit <- jags(model.file = system.file("BUGScode",
+                                     "tte_piece-wise-cst_re_lnprior.txt",
+                                     package = "gemtcPlus"),
+            data = c(dat_jg,
+                     list(prior_mean = 0),
+                     list(prior_prec = 0.0001),
+                     list(ln.prior.mn = -2),
+                     list(ln.prior.prec = 1/1.4^2)),
+            parameters = c("d", "mu", "sd"),
+            n.chains = n.chains, n.iter = n.iter, n.burnin = n.burnin, n.thin = n.thin)
+fit.count <- fit.count + 1
+
+# Re-calculate DIC as default in JAGS uses normal approximation instead of full MCMC samples
+DICsamp <- dic.samples(fit$model, n.iter = n.iter, n.burn = n.burnin, thin = n.thin, type="pD")
+DICsamp
+
+fit$BUGSoutput$DIC      <- sum(DICsamp$deviance) + sum(DICsamp$penalty)
+fit$BUGSoutput$pD       <- sum(DICsamp$penalty)
+fit$BUGSoutput$DICbyR   <- FALSE
+
+fit
+```
+
+
+```{r}
+## Diagnostics
+if (do.conv.diag) {get_pwe_conv_diag(fit,
+                                     file = here::here("inst",
+                                                       "extdata",
+                                                       "results",
+                                                       paste("fit-pwe-conv-",
+                                                             fit.count,
+                                                             ".pdf",
+                                                             sep = "")))}
+
+## prepare output
+out_all[[fit.count]] <- c(out_gen,
+                          list(fit = fit,
+                               DICsamp = DICsamp,
+                               descr_s = "PWE, RE (Inflated Turner et al prior)",
+                               descr = "Piecewise constant model (random effects, Inflated Turner et al prior, LN(-2, 1.4^2))",
+                               RE = TRUE,
+                               comment.re = "Inflated Turner et al prior, LN(-2, 1.4^2))",
+                               prior = "LN(-2, 1.4^2)"))
+```
+
+
+__Save output object for report generation.__
+```{r, echo=TRUE}
+# split list into separate objects, otherwise file size too large for github (>100MB)
+for(i in seq_along(out_all)){
+  out <- out_all[[i]]
+  save(out, file = here::here("inst",
+                              "extdata",
+                              "results",
+                              paste("fit-pwe-",
+                                    i,
+                                    ".RData",
+                                    sep = "")))
+}
+```
+
+
+# Session info
+```{r}
+date()
+sessionInfo()
+```
+
